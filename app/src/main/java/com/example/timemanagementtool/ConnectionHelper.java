@@ -11,11 +11,11 @@ public class ConnectionHelper {
     String uname, pass, ip, port, db;
 
     public Connection connectionclass() {
-        ip = "";
-        db = "";
-        uname = "";
-        pass = "";
-        port = "";
+        ip = "172.17.0.1";
+        db = "sys";
+        uname = "root";
+        pass = "1337";
+        port = "3306";
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -23,11 +23,11 @@ public class ConnectionHelper {
         String ConnectionURL = null;
 
         try {
-            Class.forName("net.sourceforge.jtds-jdbc.Driver");
-            ConnectionURL = "jdbc:jtds:sqlserver://" + ip + ":" + port + ";" + "databasename=" + db + ";user=" + uname + ";password=" + pass + ";";
+            Class.forName("com.mysql.jdbc.Driver");
+            ConnectionURL = "jdbc:sqlserver://" + ip + ":" + port + ";" + "databasename=" + db + ";user=" + uname + ";password=" + pass + ";";
             connection = DriverManager.getConnection(ConnectionURL);
         } catch (Exception ex) {
-            Log.e("Error ", ex.getMessage());
+            Log.e("--Error-- ", ex.getMessage());
         }
         return connection;
     }
