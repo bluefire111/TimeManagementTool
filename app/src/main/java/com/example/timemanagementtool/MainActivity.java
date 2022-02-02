@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     TextView tvHeader;
     String sResult;
 
-    @SuppressLint("App")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,17 +30,19 @@ public class MainActivity extends AppCompatActivity {
         btnChange = findViewById(R.id.btn_InAndOut);
         tvHeader = findViewById(R.id.tvHeadline);
 
+
+
+
         btnChange.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                sqlConnection();
-                tvHeader.setText(sResult);
+            public void onClick(View v)  {
+                startActivity(new Intent(MainActivity.this, LoadingScreenActivity.class));
             }
         });
 
     }
 
-public void sqlConnection(){
+public void test_sqlConnection(){
     try {
         ConnectionHelper connectionHelper = new ConnectionHelper();
         connection = connectionHelper.connectionclass();
