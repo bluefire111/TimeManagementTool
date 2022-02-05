@@ -1,22 +1,24 @@
 package com.example.timemanagementtool;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private Long ID;
-    private String PhoneID;
+    private String UserId;
     private String FirstName,LastName;
 
-    public User(Long id, String PhoneID, String FirstName, String LastName){
+    public User(Long id, String UserId, String FirstName, String LastName){
         this.ID = id;
-        this.PhoneID = PhoneID;
+        this.UserId = UserId;
         this.FirstName = FirstName;
         this.LastName = LastName;
     }
     public Long getID() {
         return ID;
     }
-    public String getPhoneID() {
-        return PhoneID;
+    public String getUserId() {
+        return UserId;
     }
     public String getFirstName() {
         return FirstName;
@@ -24,4 +26,6 @@ public class User {
     public String getLastName() {
         return LastName;
     }
+
+
 }

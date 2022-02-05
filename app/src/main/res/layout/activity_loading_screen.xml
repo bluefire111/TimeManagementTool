@@ -11,12 +11,12 @@
         android:id="@+id/tvAppTitle"
         android:layout_width="260dp"
         android:layout_height="80dp"
-        android:layout_marginStart="84dp"
         android:layout_marginTop="64dp"
         android:text="Zeiterfassungs System"
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,19 +25,44 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvLoadingScreenInfo" />
+        android:layout_marginBottom="52dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/tvLoadingScreenInfo"
-        android:layout_width="260dp"
-        android:layout_height="260dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="32dp"
-        android:text="Some Info...."
+    <EditText
+        android:id="@+id/edt_UserId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:ems="10"
+        android:hint="UserId"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAppTitle" />
+
+    <EditText
+        android:id="@+id/edt_Password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="numberPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edt_UserId" />
+
+    <Button
+        android:id="@+id/btn_Login"
+        android:layout_width="227dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="176dp"
+        android:text="Login"
+        app:layout_constraintBottom_toTopOf="@+id/progressBarLoadingScreen"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
