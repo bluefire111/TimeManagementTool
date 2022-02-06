@@ -69,12 +69,11 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
-        android:id="@+id/tvProgressBar"
+        android:id="@+id/pbWorkingTime"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:indeterminateOnly="false"
         android:progressDrawable="@drawable/circle"
-        android:progressTint="#64FF0F"
         app:layout_constraintBottom_toTopOf="@+id/btn_InAndOut"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
@@ -90,10 +89,10 @@
         android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tvProgressBar"
-        app:layout_constraintEnd_toEndOf="@+id/tvProgressBar"
-        app:layout_constraintStart_toStartOf="@+id/tvProgressBar"
-        app:layout_constraintTop_toTopOf="@+id/tvProgressBar" />
+        app:layout_constraintBottom_toBottomOf="@+id/pbWorkingTime"
+        app:layout_constraintEnd_toEndOf="@+id/pbWorkingTime"
+        app:layout_constraintStart_toStartOf="@+id/pbWorkingTime"
+        app:layout_constraintTop_toTopOf="@+id/pbWorkingTime" />
 
     <TextView
         android:id="@+id/tv_legend1"
@@ -101,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="76dp"
         android:text="Time In"
-        app:layout_constraintEnd_toStartOf="@+id/tvProgressBar"
+        app:layout_constraintEnd_toStartOf="@+id/pbWorkingTime"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHeadline" />
@@ -112,7 +111,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Break"
-        app:layout_constraintEnd_toStartOf="@+id/tvProgressBar"
+        app:layout_constraintEnd_toStartOf="@+id/pbWorkingTime"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_legend1" />
@@ -123,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Overtime"
-        app:layout_constraintEnd_toStartOf="@+id/tvProgressBar"
+        app:layout_constraintEnd_toStartOf="@+id/pbWorkingTime"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_legend2" />
@@ -148,7 +147,7 @@
         android:layout_width="21dp"
         android:layout_height="19dp"
         android:layout_marginTop="9dp"
-        android:tint="#007BFF"
+        android:tint="#317DFF"
         app:layout_constraintEnd_toStartOf="@+id/tv_legend1"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
