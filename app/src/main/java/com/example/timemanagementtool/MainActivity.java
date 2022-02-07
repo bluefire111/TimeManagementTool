@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.sourceforge.jtds.jdbc.DateTime;
 
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvHeader, tvClock;
     User currentUser;
     int iWorkingProgress = 0;
+    NfcAdapter nfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +105,13 @@ public class MainActivity extends AppCompatActivity {
         btnNFC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                iWorkingProgress = iWorkingProgress - 10;
-                pbWorkingTime.setProgress(iWorkingProgress, true);
+                // Check for available NFC Adapter
+                nfcAdapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+                if (nfcAdapter == null) {
+                    Toast.makeText(MainActivity.this, "NFC is not available", Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
             }
         });
 
