@@ -59,7 +59,7 @@
         android:id="@+id/btn_Login"
         android:layout_width="227dp"
         android:layout_height="64dp"
-        android:layout_marginBottom="108dp"
+        android:layout_marginBottom="64dp"
         android:text="Login"
         app:layout_constraintBottom_toTopOf="@+id/progressBarLoadingScreen"
         app:layout_constraintEnd_toEndOf="parent"

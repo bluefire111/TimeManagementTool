@@ -14,7 +14,7 @@ public class ConnectionHelper {
     public Connection connectionclass() {
         //TimeManagementDB
         //172.17.0.1
-        ip = "192.168.2.220";
+        ip = "192.168.2.215";
         db = "TimeManager";
         uname = "sa";
         pass = "Admin";
