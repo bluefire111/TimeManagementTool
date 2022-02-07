@@ -224,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //function to upload the check in/out time
     public void upload_checkin() {
         try {
             ConnectionHelper connectionHelper = new ConnectionHelper();
