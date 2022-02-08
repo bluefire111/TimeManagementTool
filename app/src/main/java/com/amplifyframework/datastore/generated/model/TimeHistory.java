@@ -2,7 +2,6 @@ package com.amplifyframework.datastore.generated.model;
 
 import com.amplifyframework.core.model.temporal.Temporal;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.Objects;
 
@@ -33,8 +32,10 @@ public final class TimeHistory implements Model {
   public static final QueryField DESCRIPTION = field("Description");
   private final @ModelField(targetType="ID", isRequired = true) String id;
   private final @ModelField(targetType="ID", isRequired = true) String UserID;
-  private final @ModelField(targetType="AWSDateTime") Temporal.DateTime Date;
-  private final @ModelField(targetType="AWSDateTime") Temporal.DateTime CheckIn;
+  private final @ModelField(targetType="AWSDateTime")
+  String Date;
+  private final @ModelField(targetType="AWSDateTime")
+  String CheckIn;
   private final @ModelField(targetType="String") String Description;
   private @ModelField(targetType="AWSDateTime") Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime") Temporal.DateTime updatedAt;
@@ -46,11 +47,11 @@ public final class TimeHistory implements Model {
       return UserID;
   }
   
-  public Temporal.DateTime getDate() {
+  public String getDate() {
       return Date;
   }
   
-  public Temporal.DateTime getCheckIn() {
+  public String getCheckIn() {
       return CheckIn;
   }
   
@@ -66,7 +67,7 @@ public final class TimeHistory implements Model {
       return updatedAt;
   }
   
-  private TimeHistory(String id, String UserID, Temporal.DateTime Date, Temporal.DateTime CheckIn, String Description) {
+  private TimeHistory(String id, String UserID, String Date, String CheckIn, String Description) {
     this.id = id;
     this.UserID = UserID;
     this.Date = Date;
@@ -158,8 +159,8 @@ public final class TimeHistory implements Model {
   public interface BuildStep {
     TimeHistory build();
     BuildStep id(String id);
-    BuildStep date(Temporal.DateTime date);
-    BuildStep checkIn(Temporal.DateTime checkIn);
+    BuildStep date(String date);
+    BuildStep checkIn(String checkIn);
     BuildStep description(String description);
   }
   
@@ -167,8 +168,8 @@ public final class TimeHistory implements Model {
   public static class Builder implements UserIdStep, BuildStep {
     private String id;
     private String UserID;
-    private Temporal.DateTime Date;
-    private Temporal.DateTime CheckIn;
+    private String Date;
+    private String CheckIn;
     private String Description;
     @Override
      public TimeHistory build() {
@@ -190,13 +191,13 @@ public final class TimeHistory implements Model {
     }
     
     @Override
-     public BuildStep date(Temporal.DateTime date) {
+     public BuildStep date(String date) {
         this.Date = date;
         return this;
     }
     
     @Override
-     public BuildStep checkIn(Temporal.DateTime checkIn) {
+     public BuildStep checkIn(String checkIn) {
         this.CheckIn = checkIn;
         return this;
     }
@@ -219,7 +220,7 @@ public final class TimeHistory implements Model {
   
 
   public final class CopyOfBuilder extends Builder {
-    private CopyOfBuilder(String id, String userId, Temporal.DateTime date, Temporal.DateTime checkIn, String description) {
+    private CopyOfBuilder(String id, String userId, String date, String checkIn, String description) {
       super.id(id);
       super.userId(userId)
         .date(date)
@@ -233,12 +234,12 @@ public final class TimeHistory implements Model {
     }
     
     @Override
-     public CopyOfBuilder date(Temporal.DateTime date) {
+     public CopyOfBuilder date(String date) {
       return (CopyOfBuilder) super.date(date);
     }
     
     @Override
-     public CopyOfBuilder checkIn(Temporal.DateTime checkIn) {
+     public CopyOfBuilder checkIn(String checkIn) {
       return (CopyOfBuilder) super.checkIn(checkIn);
     }
     

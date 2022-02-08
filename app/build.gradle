@@ -47,6 +47,8 @@ dependencies {
     implementation 'com.amplifyframework:aws-api:1.6.5'
     implementation 'com.amplifyframework:aws-datastore:1.6.5'
 
+    // For getting datetime from the internet
+    implementation 'org.jsoup:jsoup:1.10.2'
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'
 }

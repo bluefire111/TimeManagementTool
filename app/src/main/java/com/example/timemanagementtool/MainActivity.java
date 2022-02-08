@@ -1,38 +1,33 @@
 package com.example.timemanagementtool;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Time;
+import java.util.Date;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.core.Amplify;
+import com.amplifyframework.core.model.query.Where;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
-
-import net.sourceforge.jtds.jdbc.DateTime;
+import com.amplifyframework.datastore.generated.model.Appointments;
+import com.amplifyframework.datastore.generated.model.TimeHistory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.DateFormat;
@@ -40,7 +35,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static com.example.timemanagementtool.R.layout.activity_main;
 
@@ -92,12 +86,20 @@ public class MainActivity extends AppCompatActivity {
 
                 if (sTimeCheckIn == "") {
                     sTimeCheckIn = get_current_time();
-                    sDateTimeCheckIn = get_current_date();
+                    try {
+                        sDateTimeCheckIn = get_current_date();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     sCheckInDescription = "Check-In";
                     Toast.makeText(MainActivity.this, "Check in uploaded at " + sTimeCheckIn, Toast.LENGTH_LONG).show();
                 } else {
                     sCheckInDescription = "Check-Out";
-                    sDateTimeCheckIn = get_current_date();
+                    try {
+                        sDateTimeCheckIn = get_current_date();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Toast.makeText(MainActivity.this, "Check out uploaded at " + sTimeCheckOut, Toast.LENGTH_LONG).show();
                 }
                 upload_checkin();
@@ -111,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
                 if (nfcAdapter == null) {
-                    Toast.makeText(MainActivity.this,"This device does not support NFC.", Toast.LENGTH_LONG);
+                    Toast.makeText(MainActivity.this, "This device does not support NFC.", Toast.LENGTH_LONG);
                     return;
                 }
 
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     // get the return value (intent) from the login activitiy
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -143,8 +146,16 @@ public class MainActivity extends AppCompatActivity {
                 currentUser = (User) data.getSerializableExtra("User");
                 tvHeader.setText("Hallo " + currentUser.getFirstName());
 
-                get_last_checkin_time();
-                get_last_checkout_time();
+                try {
+                    get_last_checkin_time();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    get_last_checkout_time();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 if (sTimeCheckOut != "") {
                     btnCheckIn.setAlpha(.5f);
@@ -159,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     // Start Loading activity and check the user credentials that have been embedded in this system
     public void check_login() {
         Intent myIntent = new Intent(MainActivity.this, LoadingScreenActivity.class);
@@ -166,57 +178,27 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(myIntent, 1);
 
     }
+
     // function to set the clock to the current time
     public void update_clock() {
         tvClock.setText(get_current_time());
     }
+
     // function to get the current system date
-    public String get_current_date() {
-        try {
-            ConnectionHelper connectionHelper = new ConnectionHelper();
-            connection = connectionHelper.connectionclass();
-            if (connection != null) {
-                String query = "SELECT GETDATE() AS date";
-                Statement statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(query);
-                if (rs.next() != false) {
-                    //System.out.println("+++++"+dateTimeFormatCheckIn.format(rs.getTimestamp(1)));
-                    return dateTimeFormatCheckIn.format(rs.getTimestamp(1));
-                }
-
-            }
-
-        } catch (Exception ex) {
-
-            Log.e("Error function get_current_date", ex.getMessage());
-        }
-
-        return "";
+    public String get_current_date() throws Exception {
+            Date currentTime = Calendar.getInstance().getTime();
+            return dateTimeFormatCheckIn.format(currentTime);
     }
-    // function to geth the current system time
+
+    // function to get the current system time
     public String get_current_time() {
-        try {
-            ConnectionHelper connectionHelper = new ConnectionHelper();
-            connection = connectionHelper.connectionclass();
-            if (connection != null) {
-                String query = "SELECT GETDATE() AS date";
-                Statement statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(query);
-                if (rs.next() != false) {
-                    return timeFormatCheckIn.format(rs.getTimestamp(1));
-                }
-
-            }
-
-        } catch (Exception ex) {
-
-            Log.e("Error function get_current_date", ex.getMessage());
-        }
-
-        return "";
+        Date currentTime = Calendar.getInstance().getTime();
+        return timeFormatCheckIn.format(currentTime);
     }
+
     // function to get the last check in entry from the database
-    public void get_last_checkin_time() {
+    public void get_last_checkin_time() throws Exception {
+        /*
         try {
             ConnectionHelper connectionHelper = new ConnectionHelper();
             connection = connectionHelper.connectionclass();
@@ -236,9 +218,24 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("Error function get_last_checkin_time ", ex.getMessage());
         }
+        */
+
+        Amplify.DataStore.query(
+                com.amplifyframework.datastore.generated.model.TimeHistory.class,
+                Where.matches(TimeHistory.USER_ID.eq(currentUser.getUserId()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-In"))),
+                items -> {
+                    while (items.hasNext()) {
+                        com.amplifyframework.datastore.generated.model.TimeHistory item = items.next();
+                        sDateTimeCheckIn = dateTimeFormatCheckIn.format(item.getCheckIn().toString());
+                        sTimeCheckIn = timeFormatCheckIn.format(item.getCheckIn().toString());
+                        Log.i("Amplify", "Successfully retrieved the checkin information");
+                    }
+                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
     }
+
     // function to get the last check out entry from the database
-    public void get_last_checkout_time() {
+    public void get_last_checkout_time() throws Exception {
+        /*
         try {
             ConnectionHelper connectionHelper = new ConnectionHelper();
             connection = connectionHelper.connectionclass();
@@ -257,10 +254,23 @@ public class MainActivity extends AppCompatActivity {
 
             Log.e("Error function get_last_checkin_time ", ex.getMessage());
         }
+        */
+
+        Amplify.DataStore.query(
+                com.amplifyframework.datastore.generated.model.TimeHistory.class,
+                Where.matches(TimeHistory.USER_ID.eq(currentUser.getUserId()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-Out"))),
+                items -> {
+                    while (items.hasNext()) {
+                        com.amplifyframework.datastore.generated.model.TimeHistory item = items.next();
+                        sTimeCheckOut = timeFormatCheckIn.format(item.getCheckIn().toString());
+                        Log.i("Amplify", "Successfully retrieved the checkout information");
+                    }
+                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
     }
+
     //function to upload the check in/out time
     public void upload_checkin() {
-        try {
+        /*try {
             ConnectionHelper connectionHelper = new ConnectionHelper();
             connection = connectionHelper.connectionclass();
             if (connection != null) {
@@ -272,11 +282,24 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
             Log.e("Error function upload_checkin", ex.getMessage());
         }
+        */
+        TimeHistory item = TimeHistory.builder()
+                .userId(currentUser.getID())
+                .date(sDateTimeCheckIn)
+                .checkIn(sTimeCheckIn)
+                .description(sCheckInDescription)
+                .build();
+        Amplify.DataStore.save(
+                item,
+                success -> Log.i("Amplify", "Saved item: " + success.item().getId()),
+                error -> Log.e("Amplify", "Could not save item to DataStore", error)
+        );
     }
+
     // function to update the progressbar
     public void update_progressbar() throws ParseException {
         // In case check out has been already done select check in & check out and set the progress bar
-        Integer totalMinutes=0;
+        Integer totalMinutes = 0;
         if (sTimeCheckOut != "" && sTimeCheckIn != "") {
             Integer iMinutesCheckIn = convert_to_minutes(sTimeCheckIn);
             Integer iMinutesSystemTime = convert_to_minutes(sTimeCheckOut);
@@ -302,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     // converts a String in the format of HH:MM to minutes
     private static int convert_to_minutes(String s) {
         String[] array = s.split(":");
@@ -310,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
         int sum = hour * 60;
         return sum + mins;
     }
+
     //loop for updating the progressbar and the clock
     private Runnable runnable = new Runnable() {
 
@@ -338,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //connect to aws
-    public void configureAmplify(){
+    public void configureAmplify() {
         try {
             //Amplify.DataStore.clear();
             Amplify.addPlugin(new AWSApiPlugin());
