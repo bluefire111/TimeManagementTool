@@ -1,0 +1,15 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-timemanagementdb-staging-81015-authRole",
+      "UnauthRoleArn": "arn:aws:iam::092024872370:role/amplify-timemanagementdb-staging-81015-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::092024872370:role/amplify-timemanagementdb-staging-81015-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-timemanagementdb-staging-81015-deployment",
+      "UnauthRoleName": "amplify-timemanagementdb-staging-81015-unauthRole",
+      "StackName": "amplify-timemanagementdb-staging-81015",
+      "StackId": "arn:aws:cloudformation:eu-west-1:092024872370:stack/amplify-timemanagementdb-staging-81015/8c4832d0-88b6-11ec-bda7-06bd581cbd5d",
+      "AmplifyAppId": "d1wbwi637dr6es"
+    }
+  }
+}

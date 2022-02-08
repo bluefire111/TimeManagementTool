@@ -15,6 +15,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.core.model.query.Where;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -54,10 +57,9 @@ public class LoadingScreenActivity extends AppCompatActivity {
                 pbLoadingScreen.setVisibility(View.VISIBLE);
                 pbLoadingScreen.setProgress(20,true);
 
-                okLogin = check_login(user,pass);
-                pbLoadingScreen.setProgress(80,true);
+                get_login(user,pass);
                 // when user has been found set progress to 100 and go back to main activity else error message and close the app
-                if(okLogin == true)
+                if(currentUser != null)
                 {
                     pbLoadingScreen.setProgress(100,true);
                     Intent intent = new Intent(v.getContext(), MainActivity.class);
@@ -73,6 +75,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    pbLoadingScreen.setProgress(0,true);
                     pbLoadingScreen.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "Unsuccessful login, please contact the local IT department.", Toast.LENGTH_LONG).show();
                 }
@@ -84,6 +87,27 @@ public class LoadingScreenActivity extends AppCompatActivity {
 
 
     }
+    public void get_login(String user, String pass)
+    {
+        pbLoadingScreen.setProgress(40,true);
+        Amplify.DataStore.query(
+                com.amplifyframework.datastore.generated.model.User.class,
+                Where.matches(com.amplifyframework.datastore.generated.model.User.USER_ID.eq(user).and(com.amplifyframework.datastore.generated.model.User.LOGIN_PIN.eq(pass))),
+                items -> {
+                    while (items.hasNext()) {
+                        com.amplifyframework.datastore.generated.model.User item = items.next();
+                        currentUser = new User(item.getId(),item.getUserId(),item.getFirstName(),item.getLastName());
+                        Log.i("Amplify", "Successfully retrieved the user information");
+                    }
+                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
+        pbLoadingScreen.setProgress(60,true);
+
+    }
+
+
+}
+/*
+    // SQL Database connection
     public boolean check_login(String userId,String loginPin){
         try {
             ConnectionHelper connectionHelper = new ConnectionHelper();
@@ -101,7 +125,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
                 else
                 {
                     pbLoadingScreen.setProgress(80,true);
-                    currentUser = new User(rs.getLong(1),rs.getString(4),rs.getString(2),rs.getString(3));
+                    currentUser = new User("1",rs.getString(4),rs.getString(2),rs.getString(3));
                     return true;
                 }
             }
@@ -111,8 +135,5 @@ public class LoadingScreenActivity extends AppCompatActivity {
         }
         return false;
     }
-
-}
-/*
 
  */

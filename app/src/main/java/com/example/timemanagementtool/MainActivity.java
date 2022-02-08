@@ -24,6 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.api.aws.AWSApiPlugin;
+import com.amplifyframework.core.Amplify;
+import com.amplifyframework.datastore.AWSDataStorePlugin;
+
 import net.sourceforge.jtds.jdbc.DateTime;
 
 import java.sql.Connection;
@@ -61,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(activity_main);
         getSupportActionBar().hide();
+
+        configureAmplify();
+
         btnCheckIn = findViewById(R.id.btn_InAndOut);
         btnNFC = findViewById(R.id.btn_NFC);
         btnCalendar = findViewById(R.id.btnCalendar);
@@ -118,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
         btnCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent myIntent = new Intent(MainActivity.this, AppointmentsActivity.class);
+                startActivity(myIntent);
             }
         });
 
@@ -212,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             ConnectionHelper connectionHelper = new ConnectionHelper();
             connection = connectionHelper.connectionclass();
             if (connection != null) {
-                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser.getID().intValue() + " AND Description LIKE 'Check-In' AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
+                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser + " AND Description LIKE 'Check-In' AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
                 Statement statement = connection.createStatement();
                 ResultSet rs = statement.executeQuery(query);
                 if (rs.next() != false) {
@@ -234,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
             ConnectionHelper connectionHelper = new ConnectionHelper();
             connection = connectionHelper.connectionclass();
             if (connection != null) {
-                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser.getID().intValue() + " AND Description LIKE 'Check-Out'  AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
+                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser.getID() + " AND Description LIKE 'Check-Out'  AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
                 Statement statement = connection.createStatement();
                 ResultSet rs = statement.executeQuery(query);
                 if (rs.next() != false) {
@@ -326,6 +335,19 @@ public class MainActivity extends AppCompatActivity {
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
+    }
+
+    //connect to aws
+    public void configureAmplify(){
+        try {
+            //Amplify.DataStore.clear();
+            Amplify.addPlugin(new AWSApiPlugin());
+            Amplify.addPlugin(new AWSDataStorePlugin());
+            Amplify.configure(getApplicationContext());
+            Log.i("Amplify", "Initialized Amplify");
+        } catch (AmplifyException error) {
+            Log.e("Amplify", "Could not initialize Amplify", error);
+        }
     }
 
 }

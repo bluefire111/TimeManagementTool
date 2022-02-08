@@ -1,0 +1,32 @@
+type Appointments @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserID: ID! @index(name: "byUser")
+  Title: String
+  Description: String
+  DateofAppo: String
+}
+
+type TimeHistory @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  UserID: ID! @index(name: "byUser")
+  Date: AWSDateTime
+  CheckIn: AWSDateTime
+  Description: String
+}
+
+type Company @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Name: String!
+  Users: [User] @hasMany(indexName: "byCompany", fields: ["id"])
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  First_Name: String!
+  Last_Name: String!
+  User_ID: String!
+  LoginPin: String!
+  CompanyID: ID! @index(name: "byCompany")
+  TimeHistories: [TimeHistory] @hasMany(indexName: "byUser", fields: ["id"])
+  Appointments: [Appointments] @hasMany(indexName: "byUser", fields: ["id"])
+}
