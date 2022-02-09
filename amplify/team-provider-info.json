@@ -10,6 +10,11 @@
       "StackName": "amplify-timemanagementdb-staging-81015",
       "StackId": "arn:aws:cloudformation:eu-west-1:092024872370:stack/amplify-timemanagementdb-staging-81015/8c4832d0-88b6-11ec-bda7-06bd581cbd5d",
       "AmplifyAppId": "d1wbwi637dr6es"
+    },
+    "categories": {
+      "auth": {
+        "timemanagementdb63165dc8": {}
+      }
     }
   }
 }

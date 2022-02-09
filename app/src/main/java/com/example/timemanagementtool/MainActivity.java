@@ -15,21 +15,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.sql.Time;
-import java.util.Date;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.AmplifyException;
-import com.amplifyframework.api.aws.AWSApiPlugin;
 import com.amplifyframework.core.Amplify;
 import com.amplifyframework.core.model.query.Where;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
-import com.amplifyframework.datastore.generated.model.Appointments;
 import com.amplifyframework.datastore.generated.model.TimeHistory;
-
+import com.amplifyframework.api.aws.AWSApiPlugin;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,13 +36,14 @@ public class MainActivity extends AppCompatActivity {
     Connection connection;
     DateFormat timeFormatCheckIn;
     DateFormat dateTimeFormatCheckIn;
+    DateFormat dateFormatCheckin;
     String sCheckInDescription;
     String sTimeCheckIn;
     String sTimeCheckOut;
     String sDateTimeCheckIn;
     String sTimeSystem;
     ProgressBar pbWorkingTime;
-    Button btnCheckIn, btnNFC, btnCalendar, btnSettings;
+    Button btnCheckIn, btnNFC, btnCalendar, btnExit;
     TextView tvHeader, tvClock;
     User currentUser;
     NfcAdapter nfcAdapter;
@@ -58,20 +53,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        configureAmplify();
         setContentView(activity_main);
         getSupportActionBar().hide();
 
-        configureAmplify();
 
         btnCheckIn = findViewById(R.id.btn_InAndOut);
         btnNFC = findViewById(R.id.btn_NFC);
         btnCalendar = findViewById(R.id.btnCalendar);
-        btnSettings = findViewById(R.id.btnSettings);
+        btnExit = findViewById(R.id.btn_exit);
         tvHeader = findViewById(R.id.tvHeadline);
         tvClock = findViewById(R.id.tvClock);
         pbWorkingTime = findViewById(R.id.pbWorkingTime);
         timeFormatCheckIn = new SimpleDateFormat("HH:mm");
         dateTimeFormatCheckIn = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+        dateFormatCheckin = new SimpleDateFormat("YYYY-MM-dd");
         check_login();
         sTimeCheckIn = "";
         sTimeCheckOut = "";
@@ -87,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 if (sTimeCheckIn == "") {
                     sTimeCheckIn = get_current_time();
                     try {
-                        sDateTimeCheckIn = get_current_date();
+                        sDateTimeCheckIn = get_current_datetime();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -96,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     sCheckInDescription = "Check-Out";
                     try {
-                        sDateTimeCheckIn = get_current_date();
+                        sDateTimeCheckIn = get_current_datetime();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -129,7 +125,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent myIntent = new Intent(MainActivity.this, AppointmentsActivity.class);
+                myIntent.putExtra("userid",currentUser.getID());
                 startActivity(myIntent);
+            }
+        });
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -157,10 +160,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if (sTimeCheckOut != "") {
-                    btnCheckIn.setAlpha(.5f);
-                    btnCheckIn.setClickable(false);
-                }
 
                 handler.post(runnable);
 
@@ -185,9 +184,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // function to get the current system date
-    public String get_current_date() throws Exception {
-            Date currentTime = Calendar.getInstance().getTime();
-            return dateTimeFormatCheckIn.format(currentTime);
+    public String get_current_datetime() {
+        Date currentTime = Calendar.getInstance().getTime();
+        return dateTimeFormatCheckIn.format(currentTime);
+    }
+
+    public String get_current_date() {
+        Date currentTime = Calendar.getInstance().getTime();
+        return dateFormatCheckin.format(currentTime);
     }
 
     // function to get the current system time
@@ -197,92 +201,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // function to get the last check in entry from the database
-    public void get_last_checkin_time() throws Exception {
-        /*
-        try {
-            ConnectionHelper connectionHelper = new ConnectionHelper();
-            connection = connectionHelper.connectionclass();
-            if (connection != null) {
-                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser + " AND Description LIKE 'Check-In' AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
-                Statement statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(query);
-                if (rs.next() != false) {
-                    sDateTimeCheckIn = dateTimeFormatCheckIn.format(rs.getTimestamp(2));
-                    sTimeCheckIn = timeFormatCheckIn.format(rs.getTimestamp(2));
-                    connection.close();
-                }
-
-            }
-
-        } catch (Exception ex) {
-
-            Log.e("Error function get_last_checkin_time ", ex.getMessage());
-        }
-        */
-
+    public void get_last_checkin_time()  {
         Amplify.DataStore.query(
                 com.amplifyframework.datastore.generated.model.TimeHistory.class,
-                Where.matches(TimeHistory.USER_ID.eq(currentUser.getUserId()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-In"))),
+                Where.matches(TimeHistory.USER_ID.eq(currentUser.getID()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-In"))),
                 items -> {
                     while (items.hasNext()) {
                         com.amplifyframework.datastore.generated.model.TimeHistory item = items.next();
-                        sDateTimeCheckIn = dateTimeFormatCheckIn.format(item.getCheckIn().toString());
-                        sTimeCheckIn = timeFormatCheckIn.format(item.getCheckIn().toString());
-                        Log.i("Amplify", "Successfully retrieved the checkin information");
+                        sDateTimeCheckIn = item.getCheckIn();
+                        sTimeCheckIn = item.getCheckIn();
+                        Log.i("Amplify", "Successfully retrieved the checkin information" + item.getCheckIn().toString());
                     }
-                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
+                }, failure -> Log.e("Amplify", "Could not query DataStore for last checkin", failure));
     }
 
     // function to get the last check out entry from the database
     public void get_last_checkout_time() throws Exception {
-        /*
-        try {
-            ConnectionHelper connectionHelper = new ConnectionHelper();
-            connection = connectionHelper.connectionclass();
-            if (connection != null) {
-                String query = "Select TOP (1) * from Time_History WHERE User_ID LIKE " + currentUser.getID() + " AND Description LIKE 'Check-Out'  AND DATEADD(dd, 0, DATEDIFF(dd, 0, Date)) like DATEADD(dd, 0, DATEDIFF(dd, 0, GETDATE())) ORDER BY Date DESC";
-                Statement statement = connection.createStatement();
-                ResultSet rs = statement.executeQuery(query);
-                if (rs.next() != false) {
-                    sTimeCheckOut = timeFormatCheckIn.format(rs.getTimestamp(2));
-                    connection.close();
-                }
-
-            }
-
-        } catch (Exception ex) {
-
-            Log.e("Error function get_last_checkin_time ", ex.getMessage());
-        }
-        */
-
         Amplify.DataStore.query(
                 com.amplifyframework.datastore.generated.model.TimeHistory.class,
-                Where.matches(TimeHistory.USER_ID.eq(currentUser.getUserId()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-Out"))),
+                Where.matches(TimeHistory.USER_ID.eq(currentUser.getID()).and(TimeHistory.DATE.contains(get_current_date())).and(TimeHistory.DESCRIPTION.eq("Check-Out"))),
                 items -> {
                     while (items.hasNext()) {
                         com.amplifyframework.datastore.generated.model.TimeHistory item = items.next();
-                        sTimeCheckOut = timeFormatCheckIn.format(item.getCheckIn().toString());
+                        sTimeCheckOut = item.getCheckIn();
                         Log.i("Amplify", "Successfully retrieved the checkout information");
                     }
-                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
+                }, failure -> Log.e("Amplify", "Could not query DataStore for last checkout", failure));
     }
 
     //function to upload the check in/out time
     public void upload_checkin() {
-        /*try {
-            ConnectionHelper connectionHelper = new ConnectionHelper();
-            connection = connectionHelper.connectionclass();
-            if (connection != null) {
-                String query = "INSERT INTO Time_History VALUES (" + currentUser.getID() + ",GETDATE(),'" + sDateTimeCheckIn + "', '" + sCheckInDescription + "' )";
-                Statement statement = connection.createStatement();
-                statement.executeUpdate(query);
-            }
-
-        } catch (Exception ex) {
-            Log.e("Error function upload_checkin", ex.getMessage());
-        }
-        */
         TimeHistory item = TimeHistory.builder()
                 .userId(currentUser.getID())
                 .date(sDateTimeCheckIn)
@@ -291,8 +239,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         Amplify.DataStore.save(
                 item,
-                success -> Log.i("Amplify", "Saved item: " + success.item().getId()),
-                error -> Log.e("Amplify", "Could not save item to DataStore", error)
+                success -> Log.i("Amplify", "Saved uploaded: " + success.item().getDescription()),
+                error -> Log.e("Amplify", "Could not save Checkin or CheckOut to DataStore", error)
         );
     }
 
@@ -301,6 +249,8 @@ public class MainActivity extends AppCompatActivity {
         // In case check out has been already done select check in & check out and set the progress bar
         Integer totalMinutes = 0;
         if (sTimeCheckOut != "" && sTimeCheckIn != "") {
+            btnCheckIn.setAlpha(.5f);
+            btnCheckIn.setClickable(false);
             Integer iMinutesCheckIn = convert_to_minutes(sTimeCheckIn);
             Integer iMinutesSystemTime = convert_to_minutes(sTimeCheckOut);
             Integer iSumMinutes = iMinutesSystemTime - iMinutesCheckIn;
@@ -365,14 +315,16 @@ public class MainActivity extends AppCompatActivity {
     //connect to aws
     public void configureAmplify() {
         try {
-            //Amplify.DataStore.clear();
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSDataStorePlugin());
             Amplify.configure(getApplicationContext());
-            Log.i("Amplify", "Initialized Amplify");
+
+            Log.i("MyAmplifyApp", "Initialized Amplify");
         } catch (AmplifyException error) {
-            Log.e("Amplify", "Could not initialize Amplify", error);
+            Log.e("MyAmplifyApp", "Could not initialize Amplify", error);
         }
     }
 
+
 }
+

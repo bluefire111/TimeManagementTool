@@ -8,11 +8,11 @@
 
     <TextView
         android:id="@+id/tvHeadline"
-        android:layout_width="350dp"
-        android:layout_height="53dp"
+        android:layout_width="258dp"
+        android:layout_height="48dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
-        android:text="Guten Tag"
+        android:text="Hello "
         android:textAlignment="textStart"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -20,52 +20,42 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnSettings"
+        android:id="@+id/btnCalendar"
         android:layout_width="350dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="24dp"
-        android:text="Einstellungen"
+        android:layout_height="66dp"
+        android:layout_marginBottom="84dp"
+        android:text="Appointments"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.486"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnCalendar"
-        android:layout_width="350dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="24dp"
-        android:text="Kalendar"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/btnSettings"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_InAndOut"
         android:layout_width="350dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="66dp"
+        android:layout_marginBottom="32dp"
         android:text="Check-In"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btn_NFC"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_NFC"
         android:layout_width="350dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="24dp"
+        android:layout_height="66dp"
+        android:layout_marginBottom="32dp"
         android:text="NFC"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/btnCalendar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ProgressBar
@@ -76,10 +66,9 @@
         android:progressDrawable="@drawable/circle"
         app:layout_constraintBottom_toTopOf="@+id/btn_InAndOut"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHeadline"
-        app:layout_constraintVertical_bias="0.341"
+        app:layout_constraintVertical_bias="0.315"
         tools:progress="20" />
 
     <TextView
@@ -120,7 +109,7 @@
         android:id="@+id/tv_legend3"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="9dp"
         android:text="Overtime"
         app:layout_constraintEnd_toStartOf="@+id/pbWorkingTime"
         app:layout_constraintHorizontal_bias="1.0"
@@ -149,7 +138,7 @@
         android:layout_marginTop="9dp"
         android:tint="#317DFF"
         app:layout_constraintEnd_toStartOf="@+id/tv_legend1"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.875"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgLegend1"
         app:srcCompat="@color/black" />
@@ -158,12 +147,24 @@
         android:id="@+id/imgLegend3"
         android:layout_width="21dp"
         android:layout_height="19dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="9dp"
         android:tint="#F64545"
         app:layout_constraintEnd_toStartOf="@+id/tv_legend1"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.875"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgLegend2"
         app:srcCompat="@color/black" />
+
+    <Button
+        android:id="@+id/btn_exit"
+        android:layout_width="78dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.284"
+        app:layout_constraintStart_toEndOf="@+id/tvHeadline"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,7 +1,6 @@
 package com.example.timemanagementtool;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,20 +14,21 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.amplifyframework.AmplifyException;
+import com.amplifyframework.api.rest.RestOptions;
 import com.amplifyframework.core.Amplify;
+import com.amplifyframework.core.Consumer;
 import com.amplifyframework.core.model.query.Where;
+import com.amplifyframework.datastore.AWSDataStorePlugin;
+import com.amplifyframework.datastore.generated.model.Appointments;
+import com.amplifyframework.datastore.generated.model.TimeHistory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 public class LoadingScreenActivity extends AppCompatActivity {
     ProgressBar pbLoadingScreen;
     Button btnLogin;
     EditText edtUserName,edtPassword;
     User currentUser;
-    Connection connection;
-    boolean okLogin;
 
 
     @Override
@@ -42,46 +42,26 @@ public class LoadingScreenActivity extends AppCompatActivity {
         pbLoadingScreen = findViewById(R.id.progressBarLoadingScreen);
         pbLoadingScreen.setVisibility(View.INVISIBLE);
 
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pbLoadingScreen.setProgress(10,true);
                 String user = edtUserName.getText().toString();
                 String pass = edtPassword.getText().toString().trim();
-
+                pbLoadingScreen.setProgress(20,true);
+                get_login(user,pass);
                 // Hide the Keyboard on click
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(edtPassword.getWindowToken(),
                         InputMethodManager.RESULT_UNCHANGED_SHOWN);
 
                 pbLoadingScreen.setVisibility(View.VISIBLE);
-                pbLoadingScreen.setProgress(20,true);
 
-                get_login(user,pass);
-                // when user has been found set progress to 100 and go back to main activity else error message and close the app
-                if(currentUser != null)
-                {
-                    pbLoadingScreen.setProgress(100,true);
-                    Intent intent = new Intent(v.getContext(), MainActivity.class);
-                    /*
-                    intent.putExtra("ID", currentUser.getID());
-                    intent.putExtra("UserId", currentUser.getUserId());
-                    intent.putExtra("FirstName", currentUser.getFirstName());
-                    intent.putExtra("LastName", currentUser.getLastName());
-                    */
-                    intent.putExtra("User",currentUser);
-                    setResult(Activity.RESULT_OK,intent);
-                    finish();
-                }
-                else
-                {
-                    pbLoadingScreen.setProgress(0,true);
-                    pbLoadingScreen.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getApplicationContext(), "Unsuccessful login, please contact the local IT department.", Toast.LENGTH_LONG).show();
-                }
+
+
+
             }
         });
-
 
 
 
@@ -89,7 +69,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
     }
     public void get_login(String user, String pass)
     {
-        pbLoadingScreen.setProgress(40,true);
+        pbLoadingScreen.setProgress(30,true);
         Amplify.DataStore.query(
                 com.amplifyframework.datastore.generated.model.User.class,
                 Where.matches(com.amplifyframework.datastore.generated.model.User.USER_ID.eq(user).and(com.amplifyframework.datastore.generated.model.User.LOGIN_PIN.eq(pass))),
@@ -97,13 +77,63 @@ public class LoadingScreenActivity extends AppCompatActivity {
                     while (items.hasNext()) {
                         com.amplifyframework.datastore.generated.model.User item = items.next();
                         currentUser = new User(item.getId(),item.getUserId(),item.getFirstName(),item.getLastName());
+                        System.out.println("+++" + item.getFirstName());
                         Log.i("Amplify", "Successfully retrieved the user information");
+                        download_all_user_data();
+                        rtn_to_Main();
                     }
-                }, failure -> Log.e("Amplify", "Could not query DataStore", failure));
+                    }, failure -> Log.e("Amplify", "Could not query User Login information", failure));
+
+
+    }
+    public void rtn_to_Main() {
         pbLoadingScreen.setProgress(60,true);
+        if(currentUser != null)
+        {
+            pbLoadingScreen.setProgress(100, true);
+            Intent intent = new Intent(LoadingScreenActivity.this, MainActivity.class);
+                    /*
+                    intent.putExtra("ID", currentUser.getID());
+                    intent.putExtra("UserId", currentUser.getUserId());
+                    intent.putExtra("FirstName", currentUser.getFirstName());
+                    intent.putExtra("LastName", currentUser.getLastName());
+                    */
+            intent.putExtra("User", currentUser);
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+        else
+        {
+            pbLoadingScreen.setProgress(0,true);
+            pbLoadingScreen.setVisibility(View.INVISIBLE);
+            Toast.makeText(getApplicationContext(), "Unsuccessful login, please contact the local IT department.", Toast.LENGTH_LONG).show();
+        }
 
     }
 
+    public void download_all_user_data(){
+        Amplify.DataStore.query(
+                TimeHistory.class,
+                items -> {
+                    while (items.hasNext()) {
+                        TimeHistory item = items.next();
+                        Log.i("Amplify", "Time History Id " + item.getId());
+                    }
+                },
+                failure -> Log.e("Amplify", "Could not query Time History", failure)
+        );
+
+        Amplify.DataStore.query(
+                Appointments.class,
+                items -> {
+                    while (items.hasNext()) {
+                        Appointments item = items.next();
+                        Log.i("Amplify", "Appointments Id " + item.getId());
+                    }
+                },
+                failure -> Log.e("Amplify", "Could not query Appointments", failure)
+        );
+    }
 
 }
 /*

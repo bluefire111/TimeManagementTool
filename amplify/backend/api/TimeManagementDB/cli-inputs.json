@@ -3,11 +3,12 @@
   "serviceConfiguration": {
     "apiName": "TimeManagementDB",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-dac1fe03-10d0-499e-8a2f-36cc408d049a/amplify/backend/api/TimeManagementDB/schema.graphql",
+    "gqlSchemaPath": "C:\\Users\\Haris\\AndroidStudioProjects\\TimeManagementTool\\amplify\\backend\\api\\TimeManagementDB\\schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
-      "keyDescription": "This is an api key",
-      "expirationTime": 30
+      "expirationTime": 365,
+      "apiKeyExpirationDate": "2023-02-09T20:24:53.301Z",
+      "keyDescription": "api key description"
     },
     "additionalAuthTypes": [
       {
@@ -17,7 +18,33 @@
     "conflictResolution": {
       "defaultResolutionStrategy": {
         "type": "AUTOMERGE"
-      }
+      },
+      "perModelResolutionStrategy": [
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "Appointments"
+        },
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "TimeHistory"
+        },
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "Company"
+        },
+        {
+          "resolutionStrategy": {
+            "type": "AUTOMERGE"
+          },
+          "entityName": "User"
+        }
+      ]
     }
   }
 }

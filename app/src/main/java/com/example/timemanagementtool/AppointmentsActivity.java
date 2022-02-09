@@ -8,31 +8,36 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.amplifyframework.AmplifyException;
 import com.amplifyframework.core.Amplify;
-import com.amplifyframework.core.model.query.Where;
-import com.amplifyframework.datastore.AWSDataStorePlugin;
-import com.amplifyframework.datastore.generated.model.Appointments;
-import com.amplifyframework.datastore.generated.model.User;
 
+import com.amplifyframework.core.model.query.Where;
+import com.amplifyframework.datastore.generated.model.Appointments;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class AppointmentsActivity extends AppCompatActivity {
     private ArrayList<Appointment> appList;
     private RecyclerView recyclerView;
-
+    private String currentUserId;
+    private DateFormat timeFormater,dateformater;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointments);
-
+        getSupportActionBar().hide();
+        currentUserId = getIntent().getSerializableExtra("userid").toString();
+        timeFormater = new SimpleDateFormat("HH:mm");
+        dateformater = new SimpleDateFormat("YYYY-MM-dd");
         recyclerView = findViewById(R.id.recyclerview);
         appList = new ArrayList<>();
 
         //create_appointment();
-        //get_appointments();
+        get_appointments();
 
-        //setAdapter();
+        setAdapter();
 
 
     }
@@ -50,13 +55,17 @@ public class AppointmentsActivity extends AppCompatActivity {
     public void get_appointments(){
         Amplify.DataStore.query(
                 Appointments.class,
+                Where.matches(Appointments.USER_ID.eq(currentUserId)),
                 items -> {
                     while (items.hasNext()) {
                         Appointments item = items.next();
-                        Log.i("Amplify", "Id +++++++++ " + item.getDescription());
+                        String[] splited = item.getDateofAppo().trim().split("\\s+");
+
+                        appList.add(new Appointment(splited[0],splited[1],item.getTitle(),item.getDescription()));
+                        Log.i("Amplify", "Appointments Id " + item.getId());
                     }
                 },
-                failure -> Log.e("Amplify", "Could not query DataStore", failure)
+                failure -> Log.e("Amplify", "Could not query Appointments", failure)
         );
     }
 
@@ -65,7 +74,7 @@ public class AppointmentsActivity extends AppCompatActivity {
                 .userId("1234")
                 .title("Meeting 101")
                 .description("Presentation of App 101")
-                .dateofAppo("2022-02-08 14:00:00.000")
+                .dateofAppo("2022-02-08 14:00:00")
                 .build();
         Amplify.DataStore.save(
                 item,

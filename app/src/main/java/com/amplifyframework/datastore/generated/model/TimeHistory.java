@@ -2,6 +2,7 @@ package com.amplifyframework.datastore.generated.model;
 
 import com.amplifyframework.core.model.temporal.Temporal;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.Objects;
 
@@ -25,17 +26,15 @@ import static com.amplifyframework.core.model.query.predicate.QueryField.field;
 })
 @Index(name = "byUser", fields = {"UserID"})
 public final class TimeHistory implements Model {
-  public static final QueryField ID = field("id");
+  public static final QueryField ID = field( "id");
   public static final QueryField USER_ID = field( "UserID");
-  public static final QueryField DATE = field("Date");
-  public static final QueryField CHECK_IN = field("CheckIn");
-  public static final QueryField DESCRIPTION = field("Description");
+  public static final QueryField DATE = field( "Date");
+  public static final QueryField CHECK_IN = field( "CheckIn");
+  public static final QueryField DESCRIPTION = field( "Description");
   private final @ModelField(targetType="ID", isRequired = true) String id;
   private final @ModelField(targetType="ID", isRequired = true) String UserID;
-  private final @ModelField(targetType="AWSDateTime")
-  String Date;
-  private final @ModelField(targetType="AWSDateTime")
-  String CheckIn;
+  private final @ModelField(targetType="String") String Date;
+  private final @ModelField(targetType="String") String CheckIn;
   private final @ModelField(targetType="String") String Description;
   private @ModelField(targetType="AWSDateTime") Temporal.DateTime createdAt;
   private @ModelField(targetType="AWSDateTime") Temporal.DateTime updatedAt;
