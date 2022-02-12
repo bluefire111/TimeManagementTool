@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.amplifyframework.AmplifyException;
 import com.amplifyframework.core.Amplify;
+import com.amplifyframework.core.AmplifyConfiguration;
 import com.amplifyframework.core.model.query.Where;
 import com.amplifyframework.datastore.AWSDataStorePlugin;
 import com.amplifyframework.datastore.generated.model.TimeHistory;
@@ -33,7 +34,6 @@ import java.util.Date;
 import static com.example.timemanagementtool.R.layout.activity_main;
 
 public class MainActivity extends AppCompatActivity {
-    Connection connection;
     DateFormat timeFormatCheckIn;
     DateFormat dateTimeFormatCheckIn;
     DateFormat dateFormatCheckin;
@@ -42,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
     String sTimeCheckOut;
     String sDateTimeCheckIn;
     String sTimeSystem;
-    ProgressBar pbWorkingTime;
+    ProgressBar pbWorkingTime,pbPauseTime,pbOverTime;
     Button btnCheckIn, btnNFC, btnCalendar, btnExit;
     TextView tvHeader, tvClock;
     User currentUser;
     NfcAdapter nfcAdapter;
+    int totalMinutes = 0;
     private int handler_time = 1000; //1 seconds in milliseconds
     private Handler handler = new Handler();
 
@@ -57,18 +58,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(activity_main);
         getSupportActionBar().hide();
 
-
         btnCheckIn = findViewById(R.id.btn_InAndOut);
         btnNFC = findViewById(R.id.btn_NFC);
         btnCalendar = findViewById(R.id.btnCalendar);
-        btnExit = findViewById(R.id.btn_exit);
         tvHeader = findViewById(R.id.tvHeadline);
         tvClock = findViewById(R.id.tvClock);
         pbWorkingTime = findViewById(R.id.pbWorkingTime);
+        pbPauseTime = findViewById(R.id.pbPauseTime);
+        pbOverTime = findViewById(R.id.pbOverTime);
+
         timeFormatCheckIn = new SimpleDateFormat("HH:mm");
         dateTimeFormatCheckIn = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
         dateFormatCheckin = new SimpleDateFormat("YYYY-MM-dd");
+
+        set_screen_invisible();
         check_login();
+
         sTimeCheckIn = "";
         sTimeCheckOut = "";
         sTimeSystem = get_current_time();
@@ -107,16 +112,17 @@ public class MainActivity extends AppCompatActivity {
         btnNFC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(MainActivity.this);
+                NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
                 if (nfcAdapter == null) {
-                    Toast.makeText(MainActivity.this, "This device does not support NFC.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "This device does not support NFC.", Toast.LENGTH_LONG);
                     return;
                 }
 
                 if (!nfcAdapter.isEnabled()) {
-                    Toast.makeText(MainActivity.this, "Please enable NFC via Settings.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Please enable NFC via Settings.", Toast.LENGTH_LONG).show();
                 }
                 nfcAdapter.setNdefPushMessageCallback(MainActivity.this::createNdefMessage, MainActivity.this);
+                Toast.makeText(getApplicationContext(),"Sucessfully activated NFC!", Toast.LENGTH_LONG);
             }
         });
 
@@ -129,12 +135,10 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(myIntent);
             }
         });
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-            }
-        });
+        if(totalMinutes> 645){
+            Toast.makeText(getApplicationContext(),"You are working overtime for : " + (totalMinutes-645) + "Minutes!", Toast.LENGTH_LONG);
+        }
 
 
     }
@@ -143,6 +147,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // wait 5 seconds
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                set_screen_visible();
+            }
+        }, 5000);   //5 seconds
 
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
@@ -244,10 +256,10 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    // function to update the progressbar
+    // function to update the progressbar based on the total minutes the user worked or is working till now
     public void update_progressbar() throws ParseException {
         // In case check out has been already done select check in & check out and set the progress bar
-        Integer totalMinutes = 0;
+
         if (sTimeCheckOut != "" && sTimeCheckIn != "") {
             btnCheckIn.setAlpha(.5f);
             btnCheckIn.setClickable(false);
@@ -271,8 +283,19 @@ public class MainActivity extends AppCompatActivity {
                 pbWorkingTime.setProgress((int) sum, true);
             }
         }
-        // TO-DO Break + Overtime
+        //  Break + Overtime
+        if(totalMinutes> 360 && totalMinutes < 540){
+            pbPauseTime.setProgress(30,true);
 
+        }
+
+        if(totalMinutes> 360 && totalMinutes < 540){
+            pbPauseTime.setProgress(45,true);
+        }
+
+        if(totalMinutes> 645){
+            pbOverTime.setProgress(totalMinutes-645,true);
+        }
 
     }
 
@@ -318,6 +341,8 @@ public class MainActivity extends AppCompatActivity {
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSDataStorePlugin());
             Amplify.configure(getApplicationContext());
+            // disable dev menu
+            Amplify.configure(AmplifyConfiguration.builder(getApplicationContext()).devMenuEnabled(false).build(), getApplicationContext());
 
             Log.i("MyAmplifyApp", "Initialized Amplify");
         } catch (AmplifyException error) {
@@ -325,6 +350,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // set the screen invisible
+    public void set_screen_invisible(){
+        btnCheckIn.setVisibility(View.INVISIBLE);
+        btnCalendar.setVisibility(View.INVISIBLE);
+        btnNFC.setVisibility(View.INVISIBLE);
+
+        pbWorkingTime.setVisibility(View.INVISIBLE);
+        pbPauseTime.setVisibility(View.INVISIBLE);
+        pbOverTime.setVisibility(View.INVISIBLE);
+        tvHeader.setVisibility(View.INVISIBLE);
+        tvClock.setVisibility(View.INVISIBLE);
+
+    }
+    // set the screen visible
+    public void set_screen_visible(){
+        btnCheckIn.setVisibility(View.VISIBLE);
+        btnCalendar.setVisibility(View.VISIBLE);
+        btnNFC.setVisibility(View.VISIBLE);
+
+        pbWorkingTime.setVisibility(View.VISIBLE);
+        pbPauseTime.setVisibility(View.VISIBLE);
+        pbOverTime.setVisibility(View.VISIBLE);
+        tvHeader.setVisibility(View.VISIBLE);
+        tvClock.setVisibility(View.VISIBLE);
+
+    }
 
 }
 

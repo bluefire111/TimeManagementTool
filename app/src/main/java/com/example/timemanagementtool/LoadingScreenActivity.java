@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +37,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
         getSupportActionBar().hide();
+
         edtUserName = findViewById(R.id.edt_UserId);
         edtPassword = findViewById(R.id.edt_Password);
         btnLogin = findViewById(R.id.btn_Login);
@@ -81,6 +83,7 @@ public class LoadingScreenActivity extends AppCompatActivity {
                         Log.i("Amplify", "Successfully retrieved the user information");
                         download_all_user_data();
                         rtn_to_Main();
+
                     }
                     }, failure -> Log.e("Amplify", "Could not query User Login information", failure));
 

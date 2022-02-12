@@ -15,9 +15,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
 
     public RecyclerAdapter(ArrayList<Appointment> appList){
         this.appList = appList;
+
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView tvdate,tvtime,tvdesc,tvtitle;
 
         public MyViewHolder(final View view){
@@ -27,6 +28,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
             tvdesc = view.findViewById(R.id.tv_list_description);
             tvtitle = view.findViewById(R.id.tv_list_title);
         }
+
     }
 
     @NonNull
@@ -46,10 +48,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.MyView
         holder.tvtime.setText(time);
         holder.tvdesc.setText(desc);
         holder.tvtitle.setText(title);
+
+
     }
 
     @Override
     public int getItemCount() {
         return appList.size();
     }
+
+
+
 }

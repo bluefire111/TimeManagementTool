@@ -23,13 +23,12 @@
         android:id="@+id/btnCalendar"
         android:layout_width="350dp"
         android:layout_height="66dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginBottom="68dp"
         android:text="Appointments"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -60,15 +59,39 @@
 
     <ProgressBar
         android:id="@+id/pbWorkingTime"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_marginStart="32dp"
         android:indeterminateOnly="false"
         android:progressDrawable="@drawable/circle"
         app:layout_constraintBottom_toTopOf="@+id/btn_InAndOut"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvHeadline"
-        app:layout_constraintVertical_bias="0.315"
+        app:layout_constraintVertical_bias="0.315" />
+
+    <ProgressBar
+        android:id="@+id/pbPauseTime"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/circle2"
+        app:layout_constraintBottom_toBottomOf="@+id/pbWorkingTime"
+        app:layout_constraintEnd_toEndOf="@+id/pbWorkingTime"
+        app:layout_constraintStart_toStartOf="@+id/pbWorkingTime"
+        app:layout_constraintTop_toTopOf="@+id/pbWorkingTime"
+        tools:progress="20" />
+
+    <ProgressBar
+        android:id="@+id/pbOverTime"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/circle3"
+        app:layout_constraintBottom_toBottomOf="@+id/pbWorkingTime"
+        app:layout_constraintEnd_toEndOf="@+id/pbWorkingTime"
+        app:layout_constraintStart_toStartOf="@+id/pbWorkingTime"
+        app:layout_constraintTop_toTopOf="@+id/pbWorkingTime"
         tools:progress="20" />
 
     <TextView
@@ -154,17 +177,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgLegend2"
         app:srcCompat="@color/black" />
-
-    <Button
-        android:id="@+id/btn_exit"
-        android:layout_width="78dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Exit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.284"
-        app:layout_constraintStart_toEndOf="@+id/tvHeadline"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
