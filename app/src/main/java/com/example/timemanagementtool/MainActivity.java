@@ -34,6 +34,7 @@ import java.util.Date;
 import static com.example.timemanagementtool.R.layout.activity_main;
 
 public class MainActivity extends AppCompatActivity {
+
     DateFormat timeFormatCheckIn;
     DateFormat dateTimeFormatCheckIn;
     DateFormat dateFormatCheckin;
@@ -43,10 +44,11 @@ public class MainActivity extends AppCompatActivity {
     String sDateTimeCheckIn;
     String sTimeSystem;
     ProgressBar pbWorkingTime,pbPauseTime,pbOverTime;
-    Button btnCheckIn, btnNFC, btnCalendar, btnExit;
+    Button btnCheckIn, btnNFC, btnCalendar;
     TextView tvHeader, tvClock;
     User currentUser;
     NfcAdapter nfcAdapter;
+    boolean msg=false;
     int totalMinutes = 0;
     private int handler_time = 1000; //1 seconds in milliseconds
     private Handler handler = new Handler();
@@ -109,22 +111,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // used to send out an NFC signal through out the phone to any nearby device that can read the signal
+        NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         btnNFC.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NfcAdapter nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+
                 if (nfcAdapter == null) {
-                    Toast.makeText(getApplicationContext(), "This device does not support NFC.", Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(), "This device does not support NFC.", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 if (!nfcAdapter.isEnabled()) {
                     Toast.makeText(getApplicationContext(), "Please enable NFC via Settings.", Toast.LENGTH_LONG).show();
                 }
-                nfcAdapter.setNdefPushMessageCallback(MainActivity.this::createNdefMessage, MainActivity.this);
-                Toast.makeText(getApplicationContext(),"Sucessfully activated NFC!", Toast.LENGTH_LONG);
+
+                if (nfcAdapter.isEnabled()) {
+                    nfcAdapter.setNdefPushMessageCallback(MainActivity.this::createNdefMessage, MainActivity.this);
+                    Toast.makeText(getApplicationContext(),"Sucessfully activated NFC!", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
+
 
         // go to new activity to add, delete or configure  important meetings etc..
         btnCalendar.setOnClickListener(new View.OnClickListener() {
@@ -136,9 +144,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(totalMinutes> 645){
-            Toast.makeText(getApplicationContext(),"You are working overtime for : " + (totalMinutes-645) + "Minutes!", Toast.LENGTH_LONG);
-        }
+
 
 
     }
@@ -148,13 +154,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // wait 5 seconds
+        // wait 3 seconds
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 set_screen_visible();
             }
-        }, 5000);   //5 seconds
+        }, 3000);   //3 seconds
 
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
@@ -174,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 handler.post(runnable);
+
 
             }
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -289,12 +296,17 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        if(totalMinutes> 360 && totalMinutes < 540){
+        if(totalMinutes > 540){
             pbPauseTime.setProgress(45,true);
         }
 
         if(totalMinutes> 645){
             pbOverTime.setProgress(totalMinutes-645,true);
+        }
+
+        if(totalMinutes> 645 && msg == false){
+            Toast.makeText(getApplicationContext(),"You are working overtime for  " + (totalMinutes-645) + " minutes!", Toast.LENGTH_LONG).show();
+            msg = true;
         }
 
     }
@@ -317,6 +329,8 @@ public class MainActivity extends AppCompatActivity {
             update_clock();
             sTimeSystem = get_current_time();
             if (sTimeCheckIn != "") {
+
+                btnCheckIn.setText("Check-Out");
                 try {
                     update_progressbar();
                 } catch (ParseException e) {
@@ -330,17 +344,16 @@ public class MainActivity extends AppCompatActivity {
 
     public NdefMessage createNdefMessage(NfcEvent nfcEvent) {
         String message = currentUser.getUserId();
-        NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
-        NdefMessage ndefMessage = new NdefMessage(ndefRecord);
-        return ndefMessage;
+        NdefRecord ndef = NdefRecord.createMime("text/plain", message.getBytes());
+        NdefMessage msg = new NdefMessage(ndef);
+        return msg;
     }
 
-    //connect to aws
+    //connect to aws-amplify
     public void configureAmplify() {
         try {
             Amplify.addPlugin(new AWSApiPlugin());
             Amplify.addPlugin(new AWSDataStorePlugin());
-            Amplify.configure(getApplicationContext());
             // disable dev menu
             Amplify.configure(AmplifyConfiguration.builder(getApplicationContext()).devMenuEnabled(false).build(), getApplicationContext());
 
@@ -376,6 +389,7 @@ public class MainActivity extends AppCompatActivity {
         tvClock.setVisibility(View.VISIBLE);
 
     }
+
 
 }
 

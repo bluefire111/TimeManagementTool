@@ -8,12 +8,13 @@ public class Appointment implements Serializable {
     private String time;
     private String title;
     private String description;
-
-    public Appointment(String date, String time, String title, String description) {
+    private String id;
+    public Appointment(String date, String time, String title, String description, String id) {
         this.date = date;
         this.time = time;
         this.title = title;
         this.description = description;
+        this.id = id;
     }
 
 
@@ -43,5 +44,13 @@ public class Appointment implements Serializable {
 
     public String getDate() {
         return date;
+    }
+
+    public String getID() {
+        return id;
+    }
+
+    public void setID(String id) {
+        this.id = id;
     }
 }

@@ -16,9 +16,11 @@
                 android:shape="ring"
                 android:thicknessRatio="16"
                 android:useLevel="true">
-
                 <solid android:color="@color/Legend1" />
             </shape>
         </rotate>
     </item>
 </layer-list>
+
+
+

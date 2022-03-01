@@ -3,41 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="100dp"
     android:gravity="center_vertical">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/layoutborder"
+        android:orientation="vertical">
     <TextView
-        android:id="@+id/tv_list_date"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Date"
-        android:textAlignment="center" />
+        android:id="@+id/tv_list_description"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="215dp"
+        android:layout_marginTop="20dp"
+        android:text="Description"
+        android:textSize="12sp"
+        android:textAlignment="center"/>
+
+        <TextView
+            android:id="@+id/tv_list_date"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:text="Date"
+            android:textAlignment="center" />
 
     <TextView
         android:id="@+id/tv_list_title"
         android:layout_width="100dp"
         android:layout_height="60dp"
         android:layout_marginStart="116dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:text="Title"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tv_list_description"
-        android:layout_width="130dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="215dp"
-        android:layout_marginTop="16dp"
-        android:text="Description"
-        android:textSize="12sp" />
+        android:textStyle="bold"
+        android:textAlignment="center"/>
 
     <TextView
         android:id="@+id/tv_list_time"
         android:layout_width="100dp"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="50dp"
         android:text="Time"
         android:textAlignment="center" />
+    </RelativeLayout>
+
 
 </FrameLayout>

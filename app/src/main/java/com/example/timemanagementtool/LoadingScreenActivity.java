@@ -24,13 +24,11 @@ import com.amplifyframework.datastore.AWSDataStorePlugin;
 import com.amplifyframework.datastore.generated.model.Appointments;
 import com.amplifyframework.datastore.generated.model.TimeHistory;
 
-
 public class LoadingScreenActivity extends AppCompatActivity {
     ProgressBar pbLoadingScreen;
     Button btnLogin;
     EditText edtUserName,edtPassword;
     User currentUser;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,26 +49,21 @@ public class LoadingScreenActivity extends AppCompatActivity {
                 String user = edtUserName.getText().toString();
                 String pass = edtPassword.getText().toString().trim();
                 pbLoadingScreen.setProgress(20,true);
+
+                // Check Login credentials
                 get_login(user,pass);
+
                 // Hide the Keyboard on click
                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(edtPassword.getWindowToken(),
-                        InputMethodManager.RESULT_UNCHANGED_SHOWN);
-
+                imm.hideSoftInputFromWindow(edtPassword.getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                 pbLoadingScreen.setVisibility(View.VISIBLE);
-
-
-
 
             }
         });
 
-
-
-
     }
-    public void get_login(String user, String pass)
-    {
+
+    public void get_login(String user, String pass) {
         pbLoadingScreen.setProgress(30,true);
         Amplify.DataStore.query(
                 com.amplifyframework.datastore.generated.model.User.class,
@@ -79,16 +72,19 @@ public class LoadingScreenActivity extends AppCompatActivity {
                     while (items.hasNext()) {
                         com.amplifyframework.datastore.generated.model.User item = items.next();
                         currentUser = new User(item.getId(),item.getUserId(),item.getFirstName(),item.getLastName());
-                        System.out.println("+++" + item.getFirstName());
                         Log.i("Amplify", "Successfully retrieved the user information");
                         download_all_user_data();
                         rtn_to_Main();
 
                     }
-                    }, failure -> Log.e("Amplify", "Could not query User Login information", failure));
+                    }, failure -> {
+                    Toast.makeText(this,"Could not establish a connection to the Database please restart the App.",Toast.LENGTH_LONG);
+                    Log.e("Amplify", "Could not query User Login information", failure);
+                });
 
 
     }
+
     public void rtn_to_Main() {
         pbLoadingScreen.setProgress(60,true);
         if(currentUser != null)
@@ -137,7 +133,6 @@ public class LoadingScreenActivity extends AppCompatActivity {
                 failure -> Log.e("Amplify", "Could not query Appointments", failure)
         );
     }
-
 }
 /*
     // SQL Database connection
